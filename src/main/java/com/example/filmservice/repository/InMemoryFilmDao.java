@@ -25,4 +25,13 @@ public class InMemoryFilmDao {
                 .findFirst() // Берем первый найденный элемент
                 .orElse(null); // Если книги не найдены, возвращаем null
     }
+
+    public List<Film> showAll() {
+        return films;
+    }
+
+    public Film addFilm(Film film) {
+        films.add(film);
+        return film;
+    }
 }
