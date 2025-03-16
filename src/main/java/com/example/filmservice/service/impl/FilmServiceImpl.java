@@ -1,40 +1,65 @@
 package com.example.filmservice.service.impl;
 
 import com.example.filmservice.model.Film;
-import com.example.filmservice.repository.InMemoryFilmDao;
+import com.example.filmservice.repository.FilmRepository;
 import com.example.filmservice.service.FilmService;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
-
 @Service
 @AllArgsConstructor
-public class FilmServiceImpl implements FilmService { // Добавляем implements FilmService
-
-    public final InMemoryFilmDao repository;
-
+public class FilmServiceImpl implements FilmService {
+    private final FilmRepository filmRepository;
 
     @Override
-    public Film findFilmById(int id) {
-        return repository.findFilmById(id);
+    public Optional<Film> findFilmById(int id) {
+        return filmRepository.findById(id);
     }
 
     @Override
-    public Film getFilmByTitle(String title) {
-        return repository.getFilmByTitle(title);
+    public Optional<Film> getFilmByTitle(String title) {
+        return filmRepository.findByTitle(title);
     }
 
+
     @Override
-    public List<Film> showAll() {
-        return repository.showAll();
+    public List<Film> searchFilms(String title, Integer releaseYear) {
+        if (title != null) {
+            return filmRepository.findByTitle(title)
+                    .map(List::of)
+                    .orElse(List.of());
+        } else if (releaseYear != null) {
+            return filmRepository.findByReleaseYear(releaseYear);
+        }
+        return filmRepository.findAll();
     }
 
     @Override
     public Film addFilm(Film film) {
-        return repository.addFilm(film);
+        return filmRepository.save(film);
     }
 
+    @Override
+    public void deleteFilm(int id) {
+        filmRepository.deleteById(id);
+    }
 
+    @Override
+    public Film updateFilm(int id, Film updatedFilm) {
+        return filmRepository.findById(id)
+                .map(film -> {
+                    film.setTitle(updatedFilm.getTitle());
+                    film.setReleaseYear(updatedFilm.getReleaseYear());
+                    return filmRepository.save(film);
+                })
+                .orElseThrow(() -> new RuntimeException("Фильм не найден"));
+    }
+
+    @Override
+    public List<Film> getAllFilms() {
+        return filmRepository.findAll();
+    }
 }

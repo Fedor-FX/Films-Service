@@ -2,15 +2,20 @@ package com.example.filmservice.service;
 
 import com.example.filmservice.model.Film;
 import java.util.List;
+import java.util.Optional;
 
 public interface FilmService {
+    Optional<Film> findFilmById(int id);
 
+    Optional<Film> getFilmByTitle(String title);
 
-    Film findFilmById(int id);
+    List<Film> searchFilms(String title, Integer releaseYear);
 
-    Film getFilmByTitle(String title);
+    Film addFilm(Film film);
 
-    List<Film> showAll();
+    Film updateFilm(int id, Film updatedFilm);
 
-    Film  addFilm(Film film);
+    void deleteFilm(int id);
+
+    List<Film> getAllFilms();
 }
